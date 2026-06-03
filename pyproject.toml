@@ -1,0 +1,72 @@
+[project]
+name = "suunto-mcp"
+version = "0.1.0"
+description = "FastMCP server for Suunto Cloud API — activity, workout, and health data"
+readme = "README.md"
+authors = [
+    { name = "Jannes Bikker", email = "jannesbikker@gmail.com" }
+]
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["mcp", "fastmcp", "suunto", "fitness", "health", "workouts"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+dependencies = [
+    "fastmcp>=3.2.4",
+    "fitparse>=1.2.0",
+    "gpxpy>=1.6.2",
+    "httpx>=0.28.1",
+    "keyring>=25.7.0",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.14.1",
+    "python-dotenv>=1.2.2",
+    "tenacity>=9.1.4",
+]
+
+[project.scripts]
+suunto-mcp = "suunto_mcp:main"
+
+[project.urls]
+Homepage = "https://github.com/jb381/suunto-mcp"
+Repository = "https://github.com/jb381/suunto-mcp"
+Issues = "https://github.com/jb381/suunto-mcp/issues"
+Changelog = "https://github.com/jb381/suunto-mcp/blob/main/CHANGELOG.md"
+
+[build-system]
+requires = ["uv_build>=0.11.11,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.pyright]
+strict = ["src"]
+include = ["src", "tests"]
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.409",
+    "pytest>=9.0.3",
+    "pytest-asyncio>=1.3.0",
+    "respx>=0.23.1",
+    "ruff>=0.15.12",
+]
