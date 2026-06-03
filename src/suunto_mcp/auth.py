@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import json
+import secrets
 import time
 from typing import Any, cast
 from urllib.parse import urlencode
@@ -110,13 +111,13 @@ def build_authorization_url(
         raise ValueError("SUUNTO_CLIENT_ID is required.")
     if not uri:
         raise ValueError("SUUNTO_REDIRECT_URI is required.")
+    oauth_state = state or secrets.token_urlsafe(24)
     query = {
         "response_type": response_type,
         "client_id": cid,
         "redirect_uri": uri,
+        "state": oauth_state,
     }
-    if state:
-        query["state"] = state
     return settings_obj.OAUTH_BASE.rstrip("/") + "/oauth/authorize?" + urlencode(query)
 
 

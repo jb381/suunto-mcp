@@ -3,10 +3,17 @@ from __future__ import annotations
 import base64
 import json
 from collections.abc import Mapping
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 
-from suunto_mcp.auth import decode_jwt_payload_unverified, infer_account_id, token_set_from_response
+from suunto_mcp.auth import (
+    build_authorization_url,
+    decode_jwt_payload_unverified,
+    infer_account_id,
+    token_set_from_response,
+)
+from suunto_mcp.config import Settings
 
 
 def _jwt(payload: dict[str, object]) -> str:
@@ -40,3 +47,18 @@ def test_infer_account_id_requires_override_for_non_jwt_token() -> None:
         infer_account_id("not-a-jwt")
 
     assert infer_account_id("not-a-jwt", explicit_account_id="manual") == "manual"
+
+
+def test_build_authorization_url_includes_state() -> None:
+    settings = Settings(
+        CLIENT_ID="client-id",
+        REDIRECT_URI="http://localhost:8080/callback",
+    )
+
+    generated = build_authorization_url(settings_obj=settings)
+    explicit = build_authorization_url(settings_obj=settings, state="known-state")
+
+    generated_query = parse_qs(urlparse(generated).query)
+    explicit_query = parse_qs(urlparse(explicit).query)
+    assert generated_query["state"][0]
+    assert explicit_query["state"] == ["known-state"]
