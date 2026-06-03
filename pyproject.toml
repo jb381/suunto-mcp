@@ -1,7 +1,7 @@
 [project]
 name = "suunto-mcp"
 version = "0.1.0"
-description = "FastMCP server for Suunto Cloud API — activity, workout, and health data"
+description = "Suunto-first FastMCP server for workouts, routes, and 24/7 activity data"
 readme = "README.md"
 authors = [
     { name = "Jannes Bikker", email = "jannesbikker@gmail.com" }

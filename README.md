@@ -2,13 +2,12 @@
 
 [![CI](https://github.com/jb381/suunto-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/jb381/suunto-mcp/actions/workflows/ci.yml)
 
-Ask your Suunto data better questions.
+Ask better questions of your Suunto data.
 
 Suunto MCP is a [FastMCP](https://gofastmcp.com/) server for Suunto Cloud API
-workouts, routes, 24/7 health data, local FIT/GPX files, Apple Health exports,
-and webhook workflows. It is built for people who want their training data
-available inside an MCP client without handing every operation a write key by
-default.
+workouts, routes, and 24/7 activity, sleep, and recovery data. It is built to
+put Suunto data inside an MCP client, with supporting tools for local FIT/GPX
+files, Apple Health exports, and Suunto webhook workflows when you need them.
 
 <p>
   <img src="assets/example-single-day.png" alt="Single-day Suunto MCP analysis example" width="49%">
@@ -21,11 +20,11 @@ default.
   workout summaries.
 - Compare activity, sleep, recovery, and daily 24/7 statistics without burning
   through Suunto's weekly API quota by accident.
-- Parse local FIT, GPX, CSV/TSV, normalized JSON, and Apple Health `export.xml`
-  files even without Suunto API credentials.
 - Export and inspect routes as GPX.
 - Receive Suunto webhooks, verify HMAC signatures, store events locally, and ask
   what follow-up fetch makes sense.
+- Parse local FIT, GPX, CSV/TSV, normalized JSON, and Apple Health `export.xml`
+  files as supporting import tools, even without Suunto API credentials.
 - Enable write tools only when you intentionally want route imports, workout
   uploads, SuuntoPlus Guide mutations, or workout add-info calls.
 
@@ -152,6 +151,8 @@ Useful resources exposed by the server:
 - `suunto://quota` shows local API quota usage.
 - `suunto://coverage` maps Suunto API areas to implemented tools.
 - `suunto://api-catalog` lists the tool groups.
+
+See [docs/tools.md](docs/tools.md) for the full tool reference.
 
 ## Optional Settings
 
