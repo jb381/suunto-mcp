@@ -236,6 +236,20 @@ The server is designed to be useful without being adventurous with your data:
 Set `SUUNTO_API_WEEKLY_CALL_LIMIT=0` only when you intentionally want to disable
 the local weekly guard.
 
+## Troubleshooting
+
+- If keyring storage fails on a headless machine or CI runner, switch to
+  `SUUNTO_TOKEN_STORE=file` and keep `SUUNTO_TOKEN_FILE` inside `.suunto-mcp/`.
+- If a cloud tool says the stored access token is expired and no refresh token is
+  available, repeat OAuth or import a token response that includes
+  `refresh_token`.
+- If quota blocks a request, inspect `suunto://quota` or call
+  `suunto_api_quota_status`. By default the ledger is stored next to
+  `.suunto-mcp/data` as `api-quota.json`.
+- If live API tests do not run, that is expected. They are skipped unless
+  `SUUNTO_LIVE_TESTS=true` and `SUUNTO_LIVE_TOKEN_FILE` points at a valid token
+  file.
+
 ## Development
 
 ```bash
