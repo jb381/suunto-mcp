@@ -2,12 +2,13 @@
 
 [![CI](https://github.com/jb381/suunto-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/jb381/suunto-mcp/actions/workflows/ci.yml)
 
-Ask better questions of your Suunto data.
+Turn your Suunto history into something you can actually talk to.
 
 Suunto MCP is a [FastMCP](https://gofastmcp.com/) server for Suunto Cloud API
-workouts, routes, and 24/7 activity, sleep, and recovery data. It is built to
-put Suunto data inside an MCP client, with supporting tools for local FIT/GPX
-files, Apple Health exports, and Suunto webhook workflows when you need them.
+workouts, routes, and 24/7 activity, sleep, and recovery data. It gives MCP
+clients a practical, quota-aware way to explore training data, with supporting
+tools for local FIT/GPX files, Apple Health exports, and Suunto webhook
+workflows when you want more than the cloud API alone.
 
 <p>
   <img src="assets/example-single-day.png" alt="Single-day Suunto MCP analysis example" width="49%">
@@ -16,19 +17,20 @@ files, Apple Health exports, and Suunto webhook workflows when you need them.
 
 ## What You Can Do
 
-- Ask for recent workouts, complete workout details, FIT downloads, and parsed
+- Ask for recent workouts, full workout details, FIT downloads, and parsed
   workout summaries.
 - Compare activity, sleep, recovery, and daily 24/7 statistics without burning
   through Suunto's weekly API quota by accident.
 - Export and inspect routes as GPX.
-- Receive Suunto webhooks, verify HMAC signatures, store events locally, and ask
-  what follow-up fetch makes sense.
+- Receive Suunto webhooks, verify HMAC signatures, store events locally, and
+  decide which follow-up fetch is worth making.
 - Parse local FIT, GPX, CSV/TSV, normalized JSON, and Apple Health `export.xml`
-  files as supporting import tools, even without Suunto API credentials.
+  files, even without Suunto API credentials.
 - Enable write tools only when you intentionally want route imports, workout
   uploads, SuuntoPlus Guide mutations, or workout add-info calls.
 
-Write/push tools are off unless `SUUNTO_ENABLE_WRITE_TOOLS=true`.
+Write/push tools stay off unless you explicitly set
+`SUUNTO_ENABLE_WRITE_TOOLS=true`.
 
 ## Quick Start
 
@@ -38,7 +40,8 @@ Requirements:
 - [`uv`](https://docs.astral.sh/uv/)
 - Suunto API Zone credentials for cloud access
 
-Local file parsing works without Suunto credentials.
+Local file parsing works without Suunto credentials, so you can kick the tires
+before wiring up cloud access.
 
 ```bash
 git clone https://github.com/jb381/suunto-mcp.git
@@ -71,7 +74,8 @@ uv run suunto-mcp
 
 ## Add It To An MCP Client
 
-Example local command configuration:
+Most MCP clients can run the server directly over stdio. Point the client at
+your checkout:
 
 ```json
 {
@@ -84,24 +88,36 @@ Example local command configuration:
 }
 ```
 
-For local HTTP testing:
+[OpenCode](https://opencode.ai/) works too. Use a local server entry like this:
+
+```json
+{
+  "suunto": {
+    "enabled": true,
+    "type": "local",
+    "command": ["uv", "run", "--directory", "/path/to/suunto-mcp", "suunto-mcp"]
+  }
+}
+```
+
+Prefer HTTP while testing locally? Start the streamable HTTP transport:
 
 ```bash
 uv run suunto-mcp --transport streamable-http --host 127.0.0.1 --port 8000
 ```
 
-Most MCP clients should connect to:
+Then connect your client to:
 
 ```text
 http://127.0.0.1:8000/mcp
 ```
 
 If you bind HTTP, SSE, or streamable HTTP to a non-local host, set
-`SUUNTO_MCP_API_TOKEN`. The server refuses non-local HTTP binds without it.
+`SUUNTO_MCP_API_TOKEN`. The server refuses non-local HTTP binds without a token.
 
 ## First Suunto Authorization
 
-Once the server is running in your MCP client:
+Once the server is running in your MCP client, do the first OAuth handshake:
 
 1. Call `suunto_get_authorization_url`.
 2. Open the returned URL and authorize with your Suunto App account.
@@ -110,7 +126,7 @@ Once the server is running in your MCP client:
 5. Call `suunto_list_accounts`.
 6. Try `suunto_list_workouts`.
 
-For command-line OAuth debugging:
+For command-line OAuth debugging, the same flow is available by hand:
 
 ```bash
 source .env
@@ -128,11 +144,11 @@ curl https://cloudapi-oauth.suunto.com/oauth/token \
 ```
 
 Import the returned token JSON with `suunto_import_token_set` or
-`suunto_import_token_file`.
+`suunto_import_token_file`, then you are ready to ask real questions.
 
 ## Example Workflows
 
-Try prompts like:
+Good starting prompts:
 
 - "Show my last 10 Suunto workouts and flag anything unusually long or intense."
 - "Fetch the full details for yesterday's run and summarize pace, heart rate, and
@@ -145,7 +161,7 @@ Try prompts like:
 - "Estimate how many 24/7 summary calls this date range will use before fetching
   it."
 
-Useful resources exposed by the server:
+The server also exposes a few handy MCP resources:
 
 - `suunto://config` shows redacted runtime configuration.
 - `suunto://quota` shows local API quota usage.
@@ -156,7 +172,7 @@ See [docs/tools.md](docs/tools.md) for the full tool reference.
 
 ## Optional Settings
 
-File token storage, useful for development:
+File token storage, useful during development:
 
 ```env
 SUUNTO_TOKEN_STORE=file
@@ -177,7 +193,7 @@ SUUNTO_WEBHOOK_STORE=sqlite
 SUUNTO_WEBHOOK_STORE_PATH=.suunto-mcp/webhooks.sqlite3
 ```
 
-Write tools:
+Write tools, deliberately boring by default:
 
 ```env
 SUUNTO_ENABLE_WRITE_TOOLS=false
@@ -198,12 +214,15 @@ HTTP transports expose:
 - `POST /webhooks/suunto/legacy-workout`
 
 When `SUUNTO_WEBHOOK_SECRET` is configured, webhook routes require a valid
-`X-HMAC-SHA256-Signature` header. For anything persistent, prefer SQLite storage.
+`X-HMAC-SHA256-Signature` header. For anything you want to keep, prefer SQLite
+storage.
 
 Use `suunto_suggest_webhook_followups` on a stored event to find the next likely
 fetch tool for workout, route, and 24/7 notifications.
 
 ## Safety
+
+The server is designed to be useful without being adventurous with your data:
 
 - `.env`, `.suunto-mcp/`, token files, webhook stores, quota ledgers, and exports
   are gitignored.
