@@ -147,9 +147,7 @@ async def _get_247(
     account_id: str | None,
     query_params: dict[str, Any] | None = None,
 ) -> Any:
-    params = merge_params(
-        {"from": _to_ms(from_value), "to": _to_ms(to_value)}, query_params
-    )
+    params = merge_params({"from": _to_ms(from_value), "to": _to_ms(to_value)}, query_params)
     async with SuuntoClient(account_id=account_id) as client:
         return await client.get_json(endpoint, params=params)
 
