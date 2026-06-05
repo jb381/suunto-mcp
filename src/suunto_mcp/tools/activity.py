@@ -23,6 +23,11 @@ def _fmt_datetime(value: datetime) -> str:
     return value.isoformat()
 
 
+def _to_ms(value: str) -> int:
+    dt = _parse_datetime(value)
+    return int(dt.timestamp() * 1000)
+
+
 def _chunks(
     from_value: str, to_value: str, max_days: int = MAX_247_WINDOW_DAYS
 ) -> list[tuple[str, str]]:
@@ -55,8 +60,8 @@ def _planned_247_summary_calls(
                 {
                     "endpoint": "activity",
                     "path": "/247samples/activity",
-                    "from": chunk_from,
-                    "to": chunk_to,
+                    "from": _to_ms(chunk_from),
+                    "to": _to_ms(chunk_to),
                 }
             )
         if include_sleep:
@@ -64,8 +69,8 @@ def _planned_247_summary_calls(
                 {
                     "endpoint": "sleep",
                     "path": "/247samples/sleep",
-                    "from": chunk_from,
-                    "to": chunk_to,
+                    "from": _to_ms(chunk_from),
+                    "to": _to_ms(chunk_to),
                 }
             )
         if include_recovery:
@@ -73,8 +78,8 @@ def _planned_247_summary_calls(
                 {
                     "endpoint": "recovery",
                     "path": "/247samples/recovery",
-                    "from": chunk_from,
-                    "to": chunk_to,
+                    "from": _to_ms(chunk_from),
+                    "to": _to_ms(chunk_to),
                 }
             )
     if include_daily_statistics:
@@ -142,7 +147,9 @@ async def _get_247(
     account_id: str | None,
     query_params: dict[str, Any] | None = None,
 ) -> Any:
-    params = merge_params({"from": from_value, "to": to_value}, query_params)
+    params = merge_params(
+        {"from": _to_ms(from_value), "to": _to_ms(to_value)}, query_params
+    )
     async with SuuntoClient(account_id=account_id) as client:
         return await client.get_json(endpoint, params=params)
 
