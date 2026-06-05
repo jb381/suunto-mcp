@@ -52,8 +52,8 @@ def _planned_247_summary_calls(
     include_sleep: bool = True,
     include_recovery: bool = True,
     include_daily_statistics: bool = True,
-) -> list[dict[str, str]]:
-    calls: list[dict[str, str]] = []
+) -> list[dict[str, Any]]:
+    calls: list[dict[str, Any]] = []
     for chunk_from, chunk_to in _chunks(from_value, to_value):
         if include_activity:
             calls.append(
