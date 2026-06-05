@@ -9,6 +9,12 @@ All notable changes to this project will be documented here.
 - `/247samples/*` endpoints (sleep, activity, recovery) now send `from`/`to` as
   Unix millisecond timestamps instead of ISO 8601 strings, fixing HTTP 400
   "Invalid parameter 'from': Type mismatch" errors from the Suunto Cloud API.
+- Hardened upload validation, local storage paths, webhook payload handling,
+  and binary export security.
+
+### Changed
+
+- Applied `ruff` code formatting.
 
 ## 0.1.0 - 2026-06-03
 
