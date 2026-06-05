@@ -12,10 +12,6 @@ All notable changes to this project will be documented here.
 - Hardened upload validation, local storage paths, webhook payload handling,
   and binary export security.
 
-### Changed
-
-- Applied `ruff` code formatting.
-
 ## 0.1.0 - 2026-06-03
 
 Initial public alpha release.
