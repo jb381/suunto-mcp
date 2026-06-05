@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
+import stat
 import time
 from pathlib import Path
 from typing import Any, cast
@@ -138,7 +140,9 @@ def write_quota_file(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
     tmp.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
-    tmp.replace(path)
+    os.chmod(tmp, stat.S_IRUSR | stat.S_IWUSR)
+    os.replace(str(tmp), str(path))
+    os.chmod(path, stat.S_IRUSR | stat.S_IWUSR)
 
 
 def quota_status(settings_obj: Settings = settings) -> dict[str, Any]:

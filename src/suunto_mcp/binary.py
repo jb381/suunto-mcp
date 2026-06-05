@@ -49,8 +49,9 @@ def handle_binary_output(
         export_dir = resolve_export_dir(settings_obj)
         if export_dir is None:
             if output_mode == "file":
-                result["note"] = "SUUNTO_EXPORT_DIR is not configured; returning metadata only."
-                return result
+                raise RuntimeError(
+                    "SUUNTO_EXPORT_DIR is required when output_mode='file' but is not configured."
+                )
         else:
             path = export_dir / result["filename"]
             path.write_bytes(data)

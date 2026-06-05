@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import asyncio
+import ipaddress
 from pathlib import Path
 from typing import Any, Literal, cast
+from urllib.parse import urlparse
 
 import httpx
 from fastmcp import FastMCP
@@ -85,6 +87,47 @@ async def _wait_for_upload_status(
     }
 
 
+def _ip_address_or_none(hostname: str) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
+    try:
+        return ipaddress.ip_address(hostname)
+    except ValueError:
+        return None
+
+
+def _is_allowed_signed_url_hostname(hostname: str) -> bool:
+    if hostname == "storage.googleapis.com" or hostname.endswith(".storage.googleapis.com"):
+        return True
+    if hostname.endswith(".blob.core.windows.net"):
+        return True
+    if hostname.endswith(".r2.cloudflarestorage.com"):
+        return True
+
+    labels = hostname.split(".")
+    if len(labels) >= 3 and labels[-2:] == ["amazonaws", "com"]:
+        return any(label == "s3" or label.startswith("s3-") for label in labels[:-2])
+    return False
+
+
+def _validate_signed_url(url: str) -> None:
+    parsed = urlparse(url)
+    if parsed.scheme != "https":
+        raise ValueError("signed_url must use https:// scheme.")
+    if not parsed.hostname:
+        raise ValueError("signed_url must have a valid hostname.")
+    if parsed.username is not None or parsed.password is not None:
+        raise ValueError("signed_url must not contain embedded credentials.")
+    hostname = parsed.hostname.lower()
+    if hostname == "localhost":
+        raise ValueError("signed_url must not target localhost.")
+    addr = _ip_address_or_none(hostname)
+    if addr is not None:
+        if addr.is_private or addr.is_loopback or addr.is_link_local or addr.is_multicast or addr.is_reserved:
+            raise ValueError("signed_url must not target private/reserved IP addresses.")
+        raise ValueError("signed_url must target an allowed object-storage hostname, not an IP address.")
+    if not _is_allowed_signed_url_hostname(hostname):
+        raise ValueError("signed_url hostname is not an allowed object-storage host.")
+
+
 def register(mcp: FastMCP) -> None:
     @mcp.tool(
         name="suunto_init_workout_upload",
@@ -127,6 +170,7 @@ def register(mcp: FastMCP) -> None:
         headers: dict[str, str] | None = None,
     ) -> dict[str, Any]:
         require_write_tools_enabled()
+        _validate_signed_url(signed_url)
         data = Path(fit_path).expanduser().read_bytes()
         async with httpx.AsyncClient(timeout=60) as client:
             response = await client.put(signed_url, content=data, headers=headers or {})
@@ -136,7 +180,6 @@ def register(mcp: FastMCP) -> None:
             "content_md5": response.headers.get("content-md5"),
             "etag": response.headers.get("etag"),
             "signed_url": _redacted_signed_url(signed_url),
-            "response_preview": response.text[:1000],
         }
 
     @mcp.tool(name="suunto_get_upload_status", description="Fetch Suunto workout upload status.")

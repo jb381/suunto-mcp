@@ -179,7 +179,7 @@ def register(mcp: FastMCP) -> None:
             return {
                 "deauthorized": False,
                 "status_code": response.status_code,
-                "response_preview": response.text[:1000],
+                "note": "Suunto API returned an error during deauthorization.",
                 "local_removed": False,
             }
         removed = store.delete(record.account_id) if remove_local else False

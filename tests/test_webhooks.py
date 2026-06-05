@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from collections import deque
+
 from suunto_mcp.config import Settings
 from suunto_mcp.webhooks import (
+    _MEMORY_STORE_MAXLEN,
     classify_webhook_kind,
     delete_webhook_event,
     get_webhook_event,
@@ -79,6 +82,19 @@ def test_jsonl_webhook_store_deletes_events(tmp_path) -> None:
     assert get_webhook_event(stored["id"], settings) is not None
     assert delete_webhook_event(stored["id"], settings) is True
     assert list_webhook_events(settings_obj=settings) == []
+
+
+def test_memory_store_respects_maxlen(monkeypatch) -> None:
+    store = deque(maxlen=_MEMORY_STORE_MAXLEN)
+    monkeypatch.setattr("suunto_mcp.webhooks._memory_events", store)
+    settings = Settings(WEBHOOK_STORE="memory")
+
+    for i in range(_MEMORY_STORE_MAXLEN + 5):
+        store_webhook_event({"id": str(i)}, settings)
+
+    assert len(store) == _MEMORY_STORE_MAXLEN
+    oldest = list(store)[0]
+    assert oldest["id"] == "5"
 
 
 def test_suggest_webhook_followups_for_workout_route_and_247() -> None:

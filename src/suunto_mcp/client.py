@@ -37,11 +37,10 @@ class SuuntoAPIError(RuntimeError):
             "status_code": self.status_code,
             "method": self.method,
             "url": self.url,
-            "response_preview": self.response_preview,
         }
 
 
-def _redacted_response_preview(text: str, limit: int = 1000) -> str:
+def _truncated_response_preview(text: str, limit: int = 1000) -> str:
     return text[:limit]
 
 
@@ -178,7 +177,7 @@ class SuuntoClient:
                 status_code=response.status_code,
                 method=method,
                 url=url,
-                response_preview=_redacted_response_preview(response.text),
+                response_preview=_truncated_response_preview(response.text),
             )
         return response
 

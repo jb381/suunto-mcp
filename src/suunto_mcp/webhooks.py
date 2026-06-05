@@ -5,6 +5,7 @@ import hmac
 import json
 import sqlite3
 import uuid
+from collections import deque
 from pathlib import Path
 from typing import Any, cast
 
@@ -191,7 +192,8 @@ class SqliteWebhookStore:
         return cursor.rowcount > 0
 
 
-_memory_events: list[dict[str, Any]] = []
+_MEMORY_STORE_MAXLEN = 10_000
+_memory_events: deque[dict[str, Any]] = deque(maxlen=_MEMORY_STORE_MAXLEN)
 
 
 def default_webhook_path(settings_obj: Settings = settings) -> Path:
@@ -222,7 +224,7 @@ def list_webhook_events(
     limit: int = 100, settings_obj: Settings = settings
 ) -> list[dict[str, Any]]:
     if settings_obj.WEBHOOK_STORE == "memory":
-        return list(reversed(_memory_events[-limit:]))
+        return list(reversed(list(_memory_events)[-limit:]))
     if settings_obj.WEBHOOK_STORE == "jsonl":
         return JsonlWebhookStore(default_webhook_path(settings_obj)).list(limit)
     if settings_obj.WEBHOOK_STORE == "sqlite":
