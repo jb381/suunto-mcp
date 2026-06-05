@@ -11,6 +11,7 @@ from suunto_mcp.webhooks import list_webhook_events
 
 def test_json_webhook_route_stores_event(monkeypatch) -> None:
     from collections import deque
+
     monkeypatch.setattr("suunto_mcp.webhooks.settings.WEBHOOK_STORE", "memory")
     monkeypatch.setattr("suunto_mcp.webhooks._memory_events", deque(maxlen=10000))
     monkeypatch.setattr("suunto_mcp.server.settings.WEBHOOK_SECRET", "")
@@ -29,6 +30,7 @@ def test_json_webhook_route_stores_event(monkeypatch) -> None:
 
 def test_typed_route_webhook_route_uses_route_kind_without_type(monkeypatch) -> None:
     from collections import deque
+
     monkeypatch.setattr("suunto_mcp.webhooks.settings.WEBHOOK_STORE", "memory")
     monkeypatch.setattr("suunto_mcp.webhooks._memory_events", deque(maxlen=10000))
     monkeypatch.setattr("suunto_mcp.server.settings.WEBHOOK_SECRET", "")
@@ -44,6 +46,7 @@ def test_typed_route_webhook_route_uses_route_kind_without_type(monkeypatch) -> 
 
 def test_typed_sleep_webhook_route_uses_sleep_kind_without_type(monkeypatch) -> None:
     from collections import deque
+
     monkeypatch.setattr("suunto_mcp.webhooks.settings.WEBHOOK_STORE", "memory")
     monkeypatch.setattr("suunto_mcp.webhooks._memory_events", deque(maxlen=10000))
     monkeypatch.setattr("suunto_mcp.server.settings.WEBHOOK_SECRET", "")
@@ -59,6 +62,7 @@ def test_typed_sleep_webhook_route_uses_sleep_kind_without_type(monkeypatch) -> 
 
 def test_json_webhook_route_rejects_invalid_signature(monkeypatch) -> None:
     from collections import deque
+
     monkeypatch.setattr("suunto_mcp.webhooks.settings.WEBHOOK_STORE", "memory")
     monkeypatch.setattr("suunto_mcp.webhooks._memory_events", deque(maxlen=10000))
     monkeypatch.setattr("suunto_mcp.server.settings.WEBHOOK_SECRET", "secret")
@@ -76,6 +80,7 @@ def test_json_webhook_route_rejects_invalid_signature(monkeypatch) -> None:
 
 def test_json_webhook_route_accepts_valid_signature(monkeypatch) -> None:
     from collections import deque
+
     monkeypatch.setattr("suunto_mcp.webhooks.settings.WEBHOOK_STORE", "memory")
     monkeypatch.setattr("suunto_mcp.webhooks._memory_events", deque(maxlen=10000))
     monkeypatch.setattr("suunto_mcp.server.settings.WEBHOOK_SECRET", "secret")
@@ -99,6 +104,7 @@ def test_json_webhook_route_accepts_valid_signature(monkeypatch) -> None:
 
 def test_json_webhook_route_rejects_malformed_json(monkeypatch) -> None:
     from collections import deque
+
     monkeypatch.setattr("suunto_mcp.webhooks.settings.WEBHOOK_STORE", "memory")
     monkeypatch.setattr("suunto_mcp.webhooks._memory_events", deque(maxlen=10000))
     monkeypatch.setattr("suunto_mcp.server.settings.WEBHOOK_SECRET", "")
@@ -117,6 +123,7 @@ def test_json_webhook_route_rejects_malformed_json(monkeypatch) -> None:
 
 def test_legacy_workout_webhook_route_stores_form_event(monkeypatch) -> None:
     from collections import deque
+
     monkeypatch.setattr("suunto_mcp.webhooks.settings.WEBHOOK_STORE", "memory")
     monkeypatch.setattr("suunto_mcp.webhooks._memory_events", deque(maxlen=10000))
     monkeypatch.setattr("suunto_mcp.server.settings.WEBHOOK_SECRET", "")

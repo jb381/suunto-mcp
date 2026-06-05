@@ -121,9 +121,17 @@ def _validate_signed_url(url: str) -> None:
         raise ValueError("signed_url must not target localhost.")
     addr = _ip_address_or_none(hostname)
     if addr is not None:
-        if addr.is_private or addr.is_loopback or addr.is_link_local or addr.is_multicast or addr.is_reserved:
+        if (
+            addr.is_private
+            or addr.is_loopback
+            or addr.is_link_local
+            or addr.is_multicast
+            or addr.is_reserved
+        ):
             raise ValueError("signed_url must not target private/reserved IP addresses.")
-        raise ValueError("signed_url must target an allowed object-storage hostname, not an IP address.")
+        raise ValueError(
+            "signed_url must target an allowed object-storage hostname, not an IP address."
+        )
     if not _is_allowed_signed_url_hostname(hostname):
         raise ValueError("signed_url hostname is not an allowed object-storage host.")
 
