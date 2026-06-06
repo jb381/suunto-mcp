@@ -13,4 +13,5 @@ tests/
 assets/
 docs/
 *.md
+!README.md
 !.env.example

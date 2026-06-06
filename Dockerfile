@@ -3,31 +3,32 @@ FROM python:3.12-slim AS builder
 
 WORKDIR /build
 
-# Install uv
+# Install uv for building
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-# Install system deps for keyring backends (optional — not needed for file store)
+# Install build deps
 RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # Cache dependencies
-COPY pyproject.toml ./
-RUN uv sync --locked --no-dev --no-install-project
+COPY pyproject.toml README.md LICENSE ./
+RUN uv sync --no-dev --no-install-project
 
 # Copy source
 COPY src/ src/
-COPY .env.example .env.example
-RUN uv sync --locked --no-dev
+RUN uv sync --no-dev
 
 # ── Runtime image ──────────────────────────────────────────────────────────
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# Copy only the venv and source
+# Install uv so we can run with proper path resolution
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+# Copy the built project
 COPY --from=builder /build /app
-ENV PATH="/app/.venv/bin:$PATH"
 
 # Headless defaults (can be overridden at runtime via .env or env vars)
 ENV SUUNTO_TOKEN_STORE=file

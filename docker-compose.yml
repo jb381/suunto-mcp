@@ -19,9 +19,11 @@ services:
       SUUNTO_EXPORT_DIR: /data/exports
       SUUNTO_WEBHOOK_STORE: sqlite
       SUUNTO_WEBHOOK_STORE_PATH: /data/webhooks.sqlite3
+      # Required for binding to 0.0.0.0 inside the container
+      SUUNTO_MCP_API_TOKEN: "local-dev-token"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/mcp"]
+      test: ["CMD", "curl", "-sf", "-H", "Authorization: Bearer local-dev-token", "http://localhost:8000/mcp"]
       interval: 30s
       timeout: 10s
       retries: 3
