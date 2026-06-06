@@ -49,9 +49,11 @@ spec:
             - name: data
               mountPath: /data
           livenessProbe:
-            httpGet:
-              path: /mcp
-              port: 8000
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - 'curl -sf -H "Authorization: Bearer $SUUNTO_MCP_API_TOKEN" http://localhost:8000/mcp'
             initialDelaySeconds: 10
             periodSeconds: 30
           resources:
@@ -102,3 +104,4 @@ stringData:
   SUUNTO_CLIENT_SECRET: ""
   SUUNTO_REDIRECT_URI: "http://localhost:8080/callback"
   SUUNTO_SUBSCRIPTION_KEY: ""
+  SUUNTO_MCP_API_TOKEN: ""

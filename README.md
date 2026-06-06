@@ -90,6 +90,7 @@ The image ships with headless-friendly defaults:
 - **Token storage**: `file` instead of `keyring` (no desktop session needed)
 - **Data paths**: all persistent state lives under `/data` (tokens, quota ledger, exports, webhook store) — mount a volume there
 - **Transport**: streamable HTTP on port 8000
+- **API token required**: Binding HTTP on `0.0.0.0` requires setting `SUUNTO_MCP_API_TOKEN` in your `.env` file — the server will refuse to start without it. Use a strong random value and keep it secret.
 
 ### docker compose
 

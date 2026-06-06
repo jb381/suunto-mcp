@@ -11,15 +11,15 @@ RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Cache dependencies
-COPY pyproject.toml README.md LICENSE ./
-RUN uv sync --no-dev --no-install-project
+# Cache dependencies (include lockfile for reproducible builds)
+COPY pyproject.toml uv.lock README.md LICENSE ./
+RUN uv sync --locked --no-dev --no-install-project
 
 # Copy source
 COPY src/ src/
-RUN uv sync --no-dev
+RUN uv sync --locked --no-dev
 
-# ── Runtime image ──────────────────────────────────────────────────────────
+# ── Runtime image
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -27,8 +27,16 @@ WORKDIR /app
 # Install uv so we can run with proper path resolution
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
+# Install curl for health checks
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy the built project
 COPY --from=builder /build /app
+
+# Make sure the venv bin is on PATH for direct entrypoint use
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Headless defaults (can be overridden at runtime via .env or env vars)
 ENV SUUNTO_TOKEN_STORE=file
