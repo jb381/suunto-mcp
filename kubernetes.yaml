@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: suunto-mcp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: suunto-mcp
+  namespace: suunto-mcp
+  labels:
+    app: suunto-mcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: suunto-mcp
+  template:
+    metadata:
+      labels:
+        app: suunto-mcp
+    spec:
+      containers:
+        - name: suunto-mcp
+          image: suunto-mcp:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: suunto-mcp-env
+          env:
+            - name: SUUNTO_TOKEN_STORE
+              value: "file"
+            - name: SUUNTO_TOKEN_FILE
+              value: "/data/tokens.json"
+            - name: SUUNTO_API_QUOTA_FILE
+              value: "/data/api-quota.json"
+            - name: SUUNTO_LOCAL_DATA_DIR
+              value: "/data/data"
+            - name: SUUNTO_EXPORT_DIR
+              value: "/data/exports"
+            - name: SUUNTO_WEBHOOK_STORE
+              value: "sqlite"
+            - name: SUUNTO_WEBHOOK_STORE_PATH
+              value: "/data/webhooks.sqlite3"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - 'curl -sf -H "Authorization: Bearer $SUUNTO_MCP_API_TOKEN" http://localhost:8000/mcp'
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: suunto-mcp-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: suunto-mcp-data
+  namespace: suunto-mcp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: suunto-mcp
+  namespace: suunto-mcp
+spec:
+  selector:
+    app: suunto-mcp
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: suunto-mcp-env
+  namespace: suunto-mcp
+type: Opaque
+stringData:
+  SUUNTO_CLIENT_ID: ""
+  SUUNTO_CLIENT_SECRET: ""
+  SUUNTO_REDIRECT_URI: "http://localhost:8080/callback"
+  SUUNTO_SUBSCRIPTION_KEY: ""
+  SUUNTO_MCP_API_TOKEN: ""

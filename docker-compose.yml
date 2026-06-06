@@ -1,0 +1,33 @@
+services:
+  suunto-mcp:
+    build: .
+    container_name: suunto-mcp
+    ports:
+      - "8000:8000"
+    volumes:
+      - suunto-mcp-data:/data
+      - ./exports:/data/exports
+      - ./imports:/data/imports:ro
+    env_file:
+      - .env
+    environment:
+      # Container overrides (already in Dockerfile, explicit here for clarity)
+      SUUNTO_TOKEN_STORE: file
+      SUUNTO_TOKEN_FILE: /data/tokens.json
+      SUUNTO_API_QUOTA_FILE: /data/api-quota.json
+      SUUNTO_LOCAL_DATA_DIR: /data/data
+      SUUNTO_EXPORT_DIR: /data/exports
+      SUUNTO_WEBHOOK_STORE: sqlite
+      SUUNTO_WEBHOOK_STORE_PATH: /data/webhooks.sqlite3
+      # Required for binding to 0.0.0.0 inside the container
+      SUUNTO_MCP_API_TOKEN: "local-dev-token"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "-H", "Authorization: Bearer local-dev-token", "http://localhost:8000/mcp"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  suunto-mcp-data:
