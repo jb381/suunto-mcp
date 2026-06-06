@@ -72,6 +72,48 @@ Run the stdio MCP server:
 uv run suunto-mcp
 ```
 
+## Docker
+
+Build and run the server as a container for headless / production deployments:
+
+```bash
+docker build -t suunto-mcp .
+docker run -d --name suunto-mcp                                     \
+  -p 8000:8000                                                       \
+  --env-file .env                                                    \
+  -v suunto-mcp-data:/data                                           \
+  suunto-mcp
+```
+
+The image ships with headless-friendly defaults:
+
+- **Token storage**: `file` instead of `keyring` (no desktop session needed)
+- **Data paths**: all persistent state lives under `/data` (tokens, quota ledger, exports, webhook store) — mount a volume there
+- **Transport**: streamable HTTP on port 8000
+
+### docker compose
+
+A ready-to-use `docker-compose.yml` lives in the repository root. Create your
+`.env` file (copy from `.env.example`), then:
+
+```bash
+docker compose up -d
+```
+
+The compose file mounts a named volume for persistent data and includes a
+health check on the MCP endpoint.
+
+### Kubernetes
+
+A `kubernetes.yaml` manifest is provided for Kubernetes deployments. It
+includes a Deployment, Service, PersistentVolumeClaim, a dedicated Namespace,
+and a placeholder Secret for API credentials.
+
+```bash
+# Edit the secret with your credentials first, then:
+kubectl apply -f kubernetes.yaml
+```
+
 ## Add It To An MCP Client
 
 Most MCP clients can run the server directly over stdio. Point the client at

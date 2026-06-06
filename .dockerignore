@@ -1,0 +1,16 @@
+.env
+.suunto-mcp/
+.git/
+.gitignore
+__pycache__/
+*.pyc
+.venv/
+.venv-dev/
+**/*.egg-info/
+dist/
+build/
+tests/
+assets/
+docs/
+*.md
+!.env.example
