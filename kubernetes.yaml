@@ -53,7 +53,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - 'curl -sf -H "Authorization: Bearer $SUUNTO_MCP_API_TOKEN" http://localhost:8000/mcp'
+                - 'curl -sf -X POST -H "Authorization: Bearer $SUUNTO_MCP_API_TOKEN" -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" --data-raw '"'"'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"hc","version":"1"}}}'"'"' http://localhost:8000/mcp'
             initialDelaySeconds: 10
             periodSeconds: 30
           resources:
