@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import Counter
 from pathlib import Path
 from typing import Any
-from xml.etree import ElementTree
+from defusedxml import ElementTree
 
 
 def _attributes(element: ElementTree.Element[str]) -> dict[str, str]:
