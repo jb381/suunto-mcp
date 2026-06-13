@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Any
-from xml.etree import ElementTree
+from typing import Any, cast
+from xml.etree.ElementTree import Element
+
+from defusedxml import ElementTree
 
 
-def _attributes(element: ElementTree.Element[str]) -> dict[str, str]:
+def _attributes(element: Element) -> dict[str, str]:
     return {key: value for key, value in element.attrib.items()}
 
 
@@ -33,7 +36,10 @@ def parse_apple_health_export(
     current_workout_metadata: list[dict[str, str]] = []
     current_workout_events: list[dict[str, str]] = []
 
-    for event, element in ElementTree.iterparse(source, events=("start", "end")):
+    for event, element in cast(
+        Iterator[tuple[str, Element]],
+        ElementTree.iterparse(source, events=("start", "end")),
+    ):
         tag = element.tag
         if event == "start" and tag == "Workout":
             current_workout = _attributes(element)
