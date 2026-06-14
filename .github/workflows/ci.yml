@@ -40,6 +40,12 @@ jobs:
       - name: Test
         run: uv run pytest
 
+      - name: Audit dependencies for CVEs
+        run: |
+          uv export --frozen --no-dev --output-file=/tmp/requirements.txt
+          uv pip install pip-audit
+          uv run pip-audit -r /tmp/requirements.txt
+
   secrets-scan:
     runs-on: ubuntu-latest
     steps:
