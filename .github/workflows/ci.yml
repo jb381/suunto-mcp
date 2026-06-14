@@ -40,6 +40,11 @@ jobs:
       - name: Test
         run: uv run pytest
 
+      - name: Audit dependencies for CVEs
+        uses: pypa/gh-action-pip-audit@v1.1.0
+        with:
+          inputs: uv.lock
+
   secrets-scan:
     runs-on: ubuntu-latest
     steps:

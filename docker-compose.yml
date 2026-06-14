@@ -28,6 +28,14 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+    labels:
+      homepage.group: Infrastructure
+      homepage.name: Suunto MCP
+      homepage.icon: si-garmin-#007cc0
+      homepage.href: ${HOMEPAGE_HREF_SUUNTO:-http://localhost:8000/docs}
+      homepage.description: Suunto API bridge · :8000
+      homepage.weight: "600"
+      homepage.showStats: "true"
 
 volumes:
   suunto-mcp-data:
