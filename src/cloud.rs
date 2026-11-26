@@ -95,12 +95,18 @@ impl Cloud<'_> {
             .context("Suunto API request failed")
     }
 
-    fn request(&self, method: Method, path: &str, query: &Map<String, Value>) -> RequestBuilder {
-        let url = format!("{}{}", self.app.config.api_base.trim_end_matches('/'), path);
-        self.app
+    fn request(
+        &self,
+        method: Method,
+        path: &str,
+        query: &Map<String, Value>,
+    ) -> Result<RequestBuilder> {
+        let url = self.app.config.api_endpoint(path)?;
+        Ok(self
+            .app
             .http
             .request(method, url)
-            .query(&query_pairs(query))
+            .query(&query_pairs(query)))
     }
 
     async fn get(&self, path: &str, query: Map<String, Value>) -> Result<Value> {
@@ -122,7 +128,7 @@ impl Cloud<'_> {
         query: Map<String, Value>,
         accept: Option<&str>,
     ) -> Result<(Option<String>, Vec<u8>)> {
-        let mut request = self.request(Method::GET, path, &query);
+        let mut request = self.request(Method::GET, path, &query)?;
         if let Some(accept) = accept {
             request = request.header(ACCEPT, accept);
         }
@@ -132,7 +138,7 @@ impl Cloud<'_> {
 
     async fn post_json(&self, path: &str, body: &Value) -> Result<Value> {
         let request = self
-            .request(Method::POST, path, &Map::new())
+            .request(Method::POST, path, &Map::new())?
             .header(ACCEPT, JSON_CONTENT_TYPE)
             .json(body);
         let (_, body) = read_response(self.send(Method::POST, path, request).await?).await?;
@@ -148,7 +154,7 @@ impl Cloud<'_> {
         body: Vec<u8>,
     ) -> Result<(Option<String>, Vec<u8>)> {
         let request = self
-            .request(method.clone(), path, query)
+            .request(method.clone(), path, query)?
             .header(ACCEPT, JSON_CONTENT_TYPE)
             .header(CONTENT_TYPE, content_type)
             .body(body);
@@ -158,7 +164,7 @@ impl Cloud<'_> {
 
     async fn delete(&self, path: &str) -> Result<Value> {
         let request = self
-            .request(Method::DELETE, path, &Map::new())
+            .request(Method::DELETE, path, &Map::new())?
             .header(ACCEPT, JSON_CONTENT_TYPE);
         let (_, body) = read_response(self.send(Method::DELETE, path, request).await?).await?;
         if body.is_empty() {

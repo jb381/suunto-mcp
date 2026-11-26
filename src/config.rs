@@ -1,4 +1,5 @@
 use anyhow::{Context, Result, ensure};
+use reqwest::Url;
 use serde_json::{Value, json};
 use std::{collections::HashMap, env, path::PathBuf, time::Duration};
 
@@ -7,8 +8,8 @@ pub struct Config {
     pub client_secret: String,
     pub redirect_uri: String,
     pub subscription_key: String,
-    pub api_base: String,
-    pub oauth_base: String,
+    api_base: Url,
+    oauth_base: Url,
     pub rate: f64,
     pub weekly_limit: i64,
     pub quota_file: PathBuf,
@@ -54,7 +55,38 @@ pub fn expand_path(path: &str) -> PathBuf {
     }
 }
 
+fn service_base(raw: &str, setting: &str) -> Result<Url> {
+    let mut url = Url::parse(raw).with_context(|| format!("Invalid {setting}"))?;
+    // Unit tests exercise the same request paths against local mock servers.
+    let test_loopback = cfg!(test)
+        && url.scheme() == "http"
+        && matches!(url.host_str(), Some("127.0.0.1" | "[::1]"));
+    ensure!(
+        (url.scheme() == "https" || test_loopback)
+            && url.host().is_some()
+            && url.username().is_empty()
+            && url.password().is_none()
+            && url.query().is_none()
+            && url.fragment().is_none(),
+        "{setting} must be an HTTPS base URL without credentials, a query, or a fragment"
+    );
+    if !url.path().ends_with('/') {
+        url.path_segments_mut()
+            .map_err(|_| anyhow::anyhow!("Invalid {setting}"))?
+            .push("");
+    }
+    Ok(url)
+}
+
 impl Config {
+    pub(crate) fn api_endpoint(&self, path: &str) -> Result<Url> {
+        Ok(self.api_base.join(path.trim_start_matches('/'))?)
+    }
+
+    pub(crate) fn oauth_endpoint(&self, path: &str) -> Result<Url> {
+        Ok(self.oauth_base.join(path)?)
+    }
+
     pub fn load() -> Result<Self> {
         let file = match dotenvy::from_path_iter(".env") {
             Ok(iter) => iter
@@ -78,6 +110,8 @@ impl Config {
         let subscription_key = get("SUBSCRIPTION_KEY", "");
         let api_base = get("API_BASE", "https://cloudapi.suunto.com");
         let oauth_base = get("OAUTH_BASE", "https://cloudapi-oauth.suunto.com");
+        let api_url = service_base(&api_base, "SUUNTO_API_BASE")?;
+        let oauth_url = service_base(&oauth_base, "SUUNTO_OAUTH_BASE")?;
         let bearer = get("MCP_API_TOKEN", "");
         let webhook_secret = get("WEBHOOK_SECRET", "");
         let token_store = get("TOKEN_STORE", "keyring");
@@ -164,8 +198,8 @@ impl Config {
             client_secret,
             redirect_uri,
             subscription_key,
-            api_base,
-            oauth_base,
+            api_base: api_url,
+            oauth_base: oauth_url,
             rate,
             weekly_limit,
             quota_file,
@@ -188,5 +222,37 @@ impl Config {
 
     pub fn redacted(&self) -> &Value {
         &self.display
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn restricts_suunto_endpoints_to_https_and_preserves_base_path() {
+        for setting in ["SUUNTO_OAUTH_BASE", "SUUNTO_API_BASE"] {
+            for url in [
+                "http://example.net",
+                "https://name:password@example.net",
+                "https://example.net?key=value",
+                "https://example.net#fragment",
+            ] {
+                assert!(Config::from_lookup(|key| (key == setting).then(|| url.into())).is_err());
+            }
+        }
+        let config = Config::from_lookup(|key| {
+            matches!(key, "SUUNTO_OAUTH_BASE" | "SUUNTO_API_BASE")
+                .then(|| "https://example.net/suunto".into())
+        })
+        .unwrap();
+        assert_eq!(
+            config.oauth_endpoint("oauth/token").unwrap().as_str(),
+            "https://example.net/suunto/oauth/token"
+        );
+        assert_eq!(
+            config.api_endpoint("/v2/route").unwrap().as_str(),
+            "https://example.net/suunto/v2/route"
+        );
     }
 }

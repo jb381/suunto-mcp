@@ -25,6 +25,7 @@ impl App {
         let quota = Quota::new(config.quota_file.clone(), config.weekly_limit);
         let webhooks = Webhooks::new(&config.webhook_store, config.webhook_file.clone())?;
         let http = reqwest::Client::builder()
+            .https_only(!cfg!(test))
             .connect_timeout(Duration::from_secs(10))
             .timeout(Duration::from_secs(30))
             .redirect(reqwest::redirect::Policy::none())
