@@ -1,31 +1,11 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+/target/
 .DS_Store
-.coverage
-coverage.xml
-htmlcov/
-.mypy_cache/
-.pyright/
-.pytest_cache/
-.ruff_cache/
 
-# Virtual environments
-.venv
-
-# Environment / secrets
+# Environment and local data
 .env
 .env.*
 !.env.example
-
-# Local data and token files
 .suunto-mcp/
 *.token.json
 *.token.json.enc
-
-# Test exports
 test_exports/

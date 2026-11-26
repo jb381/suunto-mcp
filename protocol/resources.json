@@ -1,0 +1,46 @@
+[
+  {
+    "name": "config_resource",
+    "uri": "suunto://config",
+    "description": "Return redacted Suunto MCP configuration.",
+    "mimeType": "text/plain",
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "api_catalog_resource",
+    "uri": "suunto://api-catalog",
+    "description": "Return the implemented Suunto MCP tool catalog.",
+    "mimeType": "text/plain",
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "coverage_resource",
+    "uri": "suunto://coverage",
+    "description": "Return a compact Suunto API coverage audit for implemented tools and routes.",
+    "mimeType": "text/plain",
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "quota_resource",
+    "uri": "suunto://quota",
+    "description": "Return local Suunto API quota ledger status.",
+    "mimeType": "text/plain",
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  }
+]

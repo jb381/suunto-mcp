@@ -5,7 +5,7 @@ Thanks for helping improve Suunto MCP.
 ## Local Setup
 
 ```bash
-uv sync --dev
+cargo build --locked
 cp .env.example .env
 ```
 
@@ -17,10 +17,10 @@ credentials, token files, webhook payload stores, or exported activity data.
 Run the full local check suite before opening a pull request:
 
 ```bash
-uv run ruff format .
-uv run ruff check .
-uv run pyright
-uv run pytest
+cargo fmt --check
+cargo clippy --locked --all-targets -- -D warnings
+cargo test --locked
+docker build -t suunto-mcp .
 ```
 
 Live API tests are intentionally opt-in because Suunto developer accounts have
@@ -29,7 +29,7 @@ strict call limits:
 ```bash
 SUUNTO_LIVE_TESTS=true \
 SUUNTO_LIVE_TOKEN_FILE=.suunto-mcp/oauth-test-token.json \
-uv run pytest tests/live
+cargo test --locked --test live -- --ignored
 ```
 
 ## Pull Request Expectations

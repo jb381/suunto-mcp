@@ -1,0 +1,2803 @@
+[
+  {
+    "name": "suunto_get_authorization_url",
+    "description": "Build the Suunto OAuth browser authorization URL.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_exchange_authorization_code",
+    "description": "Exchange a Suunto OAuth authorization code for tokens and store them locally.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_import_token_set",
+    "description": "Store an existing Suunto access token and optional refresh token without exposing token values.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "expires_in": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "token_type": {
+          "default": "bearer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_import_token_file",
+    "description": "Import a token JSON response file created by a trusted OAuth test flow.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_refresh_token",
+    "description": "Refresh one stored Suunto account, or all accounts that have refresh tokens.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_list_accounts",
+    "description": "List stored Suunto accounts without secrets.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_auth_status",
+    "description": "Report whether stored account tokens are usable.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_deauthorize",
+    "description": "Call Suunto OAuth deauthorize for an account and optionally remove local tokens.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "remove_local": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_list_workouts",
+    "description": "List workouts for an authorized Suunto account using the current /v3/workouts API.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "modified_since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "extensions": {
+          "anyOf": [
+            {
+              "const": "all",
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_workout",
+    "description": "Fetch one Suunto workout JSON document.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "workout_id_or_key": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "extensions": {
+          "anyOf": [
+            {
+              "const": "all",
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "workout_id_or_key"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_workout_fit",
+    "description": "Download a workout FIT file as metadata, base64, file, or both.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "workout_id_or_key": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "output_mode": {
+          "default": "metadata",
+          "enum": [
+            "metadata",
+            "base64",
+            "file",
+            "both"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "workout_id_or_key"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_parse_workout_fit",
+    "description": "Download a workout FIT file and parse sessions, laps, events, and optional records.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "workout_id_or_key": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "include_records": {
+          "default": false,
+          "type": "boolean"
+        },
+        "record_limit": {
+          "default": 1000,
+          "type": "integer"
+        },
+        "include_messages": {
+          "default": false,
+          "type": "boolean"
+        },
+        "message_limit": {
+          "default": 2000,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workout_id_or_key"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_complete_workout",
+    "description": "Fetch workout JSON plus optional FIT metadata and parsed FIT summary.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "workout_id_or_key": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "extensions": {
+          "anyOf": [
+            {
+              "const": "all",
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "all"
+        },
+        "include_fit_metadata": {
+          "default": true,
+          "type": "boolean"
+        },
+        "parse_fit": {
+          "default": false,
+          "type": "boolean"
+        },
+        "include_records": {
+          "default": false,
+          "type": "boolean"
+        },
+        "record_limit": {
+          "default": 1000,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workout_id_or_key"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_add_workout_description_info",
+    "description": "Add information to a workout description. Requires SUUNTO_ENABLE_WRITE_TOOLS=true.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "workout_id": {
+          "type": "string"
+        },
+        "body": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "workout_id",
+        "body"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_list_workouts_deprecated_v2",
+    "description": "List workouts using Suunto's deprecated /v2/workouts API. Prefer suunto_list_workouts.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_workout_deprecated_v2",
+    "description": "Fetch one workout using Suunto's deprecated /v2/workouts API. Prefer suunto_get_workout.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "workout_key": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "workout_key"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_workout_fit_deprecated_v2",
+    "description": "Download a FIT file using Suunto's deprecated /v2/workouts API. Prefer suunto_get_workout_fit.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "workout_key": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "output_mode": {
+          "default": "metadata",
+          "enum": [
+            "metadata",
+            "base64",
+            "file",
+            "both"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "workout_key"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_activity_samples",
+    "description": "Fetch 24/7 activity samples for a Suunto account.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "from_value": {
+          "type": "string"
+        },
+        "to_value": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "from_value",
+        "to_value"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_sleep_data",
+    "description": "Fetch 24/7 sleep samples where available for the account/API subscription.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "from_value": {
+          "type": "string"
+        },
+        "to_value": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "from_value",
+        "to_value"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_recovery_data",
+    "description": "Fetch 24/7 recovery samples where available for the account/API subscription.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "from_value": {
+          "type": "string"
+        },
+        "to_value": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "from_value",
+        "to_value"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_daily_activity_statistics",
+    "description": "Fetch daily activity statistics for a date range.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "startdate": {
+          "type": "string"
+        },
+        "enddate": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "startdate",
+        "enddate"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_estimate_247_summary_calls",
+    "description": "Estimate Suunto API calls for a 24/7 summary without fetching data.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "from_value": {
+          "type": "string"
+        },
+        "to_value": {
+          "type": "string"
+        },
+        "include_activity": {
+          "default": true,
+          "type": "boolean"
+        },
+        "include_sleep": {
+          "default": true,
+          "type": "boolean"
+        },
+        "include_recovery": {
+          "default": true,
+          "type": "boolean"
+        },
+        "include_daily_statistics": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "from_value",
+        "to_value"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_247_summary",
+    "description": "Fetch activity, sleep, recovery, and daily statistics using 28-day chunks.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "from_value": {
+          "type": "string"
+        },
+        "to_value": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "include_activity": {
+          "default": true,
+          "type": "boolean"
+        },
+        "include_sleep": {
+          "default": true,
+          "type": "boolean"
+        },
+        "include_recovery": {
+          "default": true,
+          "type": "boolean"
+        },
+        "include_daily_statistics": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "from_value",
+        "to_value"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_legacy_daily_activity",
+    "description": "Fetch the legacy daily activity API surface when enabled for the subscription.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_legacy_daily_activity_statistics",
+    "description": "Fetch legacy daily activity statistics when enabled for the subscription.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "startdate": {
+          "type": "string"
+        },
+        "enddate": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "startdate",
+        "enddate"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_list_routes",
+    "description": "List routes for an authorized Suunto account.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_route",
+    "description": "Fetch one route metadata document by route id.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "route_id": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "route_id"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_export_route_gpx",
+    "description": "Export a Suunto route as GPX.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "route_id": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "output_mode": {
+          "default": "metadata",
+          "enum": [
+            "metadata",
+            "base64",
+            "file",
+            "both"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "route_id"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_parse_route_gpx",
+    "description": "Export a Suunto route as GPX and parse tracks, routes, and waypoints.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "route_id": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "include_points": {
+          "default": true,
+          "type": "boolean"
+        },
+        "point_limit": {
+          "default": 5000,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "route_id"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_import_route_gpx",
+    "description": "Import a local GPX route into Suunto App. Requires SUUNTO_ENABLE_WRITE_TOOLS=true.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "gpx_path": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "activity_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "gpx_path"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_init_workout_upload",
+    "description": "Initialize a Suunto FIT workout upload. Requires SUUNTO_ENABLE_WRITE_TOOLS=true.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "notify_user": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "privacy": {
+          "anyOf": [
+            {
+              "enum": [
+                "DEFAULT",
+                "PRIVATE",
+                "FOLLOWERS",
+                "PUBLIC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_upload_workout_fit_to_signed_url",
+    "description": "Upload a FIT file to the signed object-storage URL returned by suunto_init_workout_upload.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "signed_url": {
+          "type": "string"
+        },
+        "fit_path": {
+          "type": "string"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "signed_url",
+        "fit_path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_upload_status",
+    "description": "Fetch Suunto workout upload status.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "upload_id": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "upload_id"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_wait_for_upload_status",
+    "description": "Poll Suunto workout upload status until a terminal state or attempt limit.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "upload_id": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "terminal_statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "poll_interval_seconds": {
+          "default": 5.0,
+          "type": "number"
+        },
+        "max_attempts": {
+          "default": 12,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "upload_id"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_upload_workout_fit",
+    "description": "Initialize and upload a FIT file to Suunto App. Requires SUUNTO_ENABLE_WRITE_TOOLS=true.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "fit_path": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "notify_user": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "privacy": {
+          "anyOf": [
+            {
+              "enum": [
+                "DEFAULT",
+                "PRIVATE",
+                "FOLLOWERS",
+                "PUBLIC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fetch_status": {
+          "default": true,
+          "type": "boolean"
+        },
+        "wait_for_status": {
+          "default": false,
+          "type": "boolean"
+        },
+        "poll_interval_seconds": {
+          "default": 5.0,
+          "type": "number"
+        },
+        "max_status_attempts": {
+          "default": 12,
+          "type": "integer"
+        },
+        "terminal_statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "fit_path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_list_guides",
+    "description": "List SuuntoPlus Guides for an account.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_guide",
+    "description": "Fetch a SuuntoPlus Guide ZIP/file by id.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "guide_id": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "output_mode": {
+          "default": "metadata",
+          "enum": [
+            "metadata",
+            "base64",
+            "file",
+            "both"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "guide_id"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_validate_guide_json",
+    "description": "Validate a SuuntoPlus guide JSON object or guide.json file before upload.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "guide": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "guide_json_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_create_guide_zip",
+    "description": "Create a local SuuntoPlus guide ZIP from guide.json and icon.png.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "guide_json_path": {
+          "type": "string"
+        },
+        "icon_png_path": {
+          "type": "string"
+        },
+        "output_path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "guide_json_path",
+        "icon_png_path",
+        "output_path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_create_guide",
+    "description": "Upload a SuuntoPlus guide ZIP. Requires SUUNTO_ENABLE_WRITE_TOOLS=true.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "zip_path": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "zip_path"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_update_guide",
+    "description": "Replace a SuuntoPlus guide ZIP. Requires SUUNTO_ENABLE_WRITE_TOOLS=true.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "guide_id": {
+          "type": "string"
+        },
+        "zip_path": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "guide_id",
+        "zip_path"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_delete_guide",
+    "description": "Delete a SuuntoPlus Guide. Requires SUUNTO_ENABLE_WRITE_TOOLS=true.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "guide_id": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "guide_id"
+      ],
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_parse_fit_file",
+    "description": "Parse a local FIT file without storing it.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "include_records": {
+          "default": false,
+          "type": "boolean"
+        },
+        "record_limit": {
+          "default": 1000,
+          "type": "integer"
+        },
+        "include_messages": {
+          "default": false,
+          "type": "boolean"
+        },
+        "message_limit": {
+          "default": 2000,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_parse_gpx_file",
+    "description": "Parse a local GPX file without storing it.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "include_points": {
+          "default": true,
+          "type": "boolean"
+        },
+        "point_limit": {
+          "default": 5000,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_import_fit_file",
+    "description": "Register a local FIT file and cache a parsed summary in the local import index.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "copy_file": {
+          "default": true,
+          "type": "boolean"
+        },
+        "include_records": {
+          "default": false,
+          "type": "boolean"
+        },
+        "record_limit": {
+          "default": 1000,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_import_gpx_file",
+    "description": "Register a local GPX route/track file and cache a parsed summary.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "copy_file": {
+          "default": true,
+          "type": "boolean"
+        },
+        "include_points": {
+          "default": true,
+          "type": "boolean"
+        },
+        "point_limit": {
+          "default": 5000,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_import_activity_json",
+    "description": "Register a local normalized activity JSON file.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "copy_file": {
+          "default": true,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_parse_activity_csv",
+    "description": "Parse a local CSV/TSV activity file without storing it.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "delimiter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "has_header": {
+          "default": true,
+          "type": "boolean"
+        },
+        "preview_limit": {
+          "default": 100,
+          "type": "integer"
+        },
+        "encoding": {
+          "default": "utf-8-sig",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_import_activity_csv",
+    "description": "Register a local CSV/TSV activity file and cache a bounded preview summary.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "copy_file": {
+          "default": true,
+          "type": "boolean"
+        },
+        "delimiter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "has_header": {
+          "default": true,
+          "type": "boolean"
+        },
+        "preview_limit": {
+          "default": 100,
+          "type": "integer"
+        },
+        "encoding": {
+          "default": "utf-8-sig",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_parse_health_export",
+    "description": "Parse a local Apple Health export.xml file without storing it.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "include_records": {
+          "default": false,
+          "type": "boolean"
+        },
+        "record_limit": {
+          "default": 1000,
+          "type": "integer"
+        },
+        "include_workouts": {
+          "default": true,
+          "type": "boolean"
+        },
+        "workout_limit": {
+          "default": 500,
+          "type": "integer"
+        },
+        "include_activity_summaries": {
+          "default": true,
+          "type": "boolean"
+        },
+        "activity_summary_limit": {
+          "default": 500,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_import_health_export",
+    "description": "Register a local Apple Health export.xml file and cache a bounded summary.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "copy_file": {
+          "default": true,
+          "type": "boolean"
+        },
+        "include_records": {
+          "default": false,
+          "type": "boolean"
+        },
+        "record_limit": {
+          "default": 1000,
+          "type": "integer"
+        },
+        "include_workouts": {
+          "default": true,
+          "type": "boolean"
+        },
+        "workout_limit": {
+          "default": 500,
+          "type": "integer"
+        },
+        "include_activity_summaries": {
+          "default": true,
+          "type": "boolean"
+        },
+        "activity_summary_limit": {
+          "default": 500,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_list_imported_files",
+    "description": "List locally imported files.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "fit",
+                "gpx",
+                "json",
+                "health",
+                "csv"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_imported_activity",
+    "description": "Inspect and parse an imported file.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "import_id": {
+          "type": "string"
+        },
+        "include_records": {
+          "default": false,
+          "type": "boolean"
+        },
+        "record_limit": {
+          "default": 1000,
+          "type": "integer"
+        },
+        "include_points": {
+          "default": true,
+          "type": "boolean"
+        },
+        "point_limit": {
+          "default": 5000,
+          "type": "integer"
+        },
+        "include_health_records": {
+          "default": false,
+          "type": "boolean"
+        },
+        "health_record_limit": {
+          "default": 1000,
+          "type": "integer"
+        },
+        "csv_preview_limit": {
+          "default": 100,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "import_id"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_verify_webhook_signature",
+    "description": "Verify a Suunto webhook HMAC SHA-256 signature.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "body_is_base64": {
+          "default": false,
+          "type": "boolean"
+        },
+        "secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "body",
+        "signature"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_store_webhook_event",
+    "description": "Store a webhook notification payload in the configured local webhook store.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "event": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "event"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_list_webhook_events",
+    "description": "List locally stored webhook events.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_get_webhook_event",
+    "description": "Get one locally stored webhook event by id.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "x-fastmcp-wrap-result": true
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_delete_webhook_event",
+    "description": "Delete one locally stored webhook event by id.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_suggest_webhook_followups",
+    "description": "Suggest MCP fetch tools to call after receiving a Suunto webhook event.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "event": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "event_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  },
+  {
+    "name": "suunto_api_quota_status",
+    "description": "Inspect local Suunto API quota usage.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "_meta": {
+      "fastmcp": {
+        "tags": []
+      }
+    }
+  }
+]

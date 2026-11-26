@@ -1,54 +1,27 @@
-# syntax=docker/dockerfile:1
-FROM python:3.12-slim AS builder
+FROM rust:1.96-bookworm AS builder
 
 WORKDIR /build
-
-# Install uv for building
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
-
-# Install build deps
-RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
-
-# Cache dependencies (include lockfile for reproducible builds)
-COPY pyproject.toml uv.lock README.md LICENSE ./
-RUN uv sync --locked --no-dev --no-install-project
-
-# Copy source
+COPY Cargo.toml Cargo.lock ./
 COPY src/ src/
-RUN uv sync --locked --no-dev
+COPY protocol/ protocol/
+RUN cargo build --locked --release
 
-# ── Runtime image
-FROM python:3.12-slim
+FROM debian:bookworm-slim
 
-WORKDIR /app
+COPY --from=builder /build/target/release/suunto-mcp /usr/local/bin/suunto-mcp
 
-# Install uv so we can run with proper path resolution
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+ENV SUUNTO_TOKEN_STORE=file \
+    SUUNTO_TOKEN_FILE=/data/tokens.json \
+    SUUNTO_API_QUOTA_FILE=/data/api-quota.json \
+    SUUNTO_LOCAL_DATA_DIR=/data/data \
+    SUUNTO_EXPORT_DIR=/data/exports \
+    SUUNTO_WEBHOOK_STORE=sqlite \
+    SUUNTO_WEBHOOK_STORE_PATH=/data/webhooks.sqlite3
 
-# Install curl for health checks
-RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy the built project
-COPY --from=builder /build /app
-
-# Make sure the venv bin is on PATH for direct entrypoint use
-ENV PATH="/app/.venv/bin:$PATH"
-
-# Headless defaults (can be overridden at runtime via .env or env vars)
-ENV SUUNTO_TOKEN_STORE=file
-ENV SUUNTO_TOKEN_FILE=/data/tokens.json
-ENV SUUNTO_API_QUOTA_FILE=/data/api-quota.json
-ENV SUUNTO_LOCAL_DATA_DIR=/data/data
-ENV SUUNTO_EXPORT_DIR=/data/exports
-ENV SUUNTO_WEBHOOK_STORE=sqlite
-ENV SUUNTO_WEBHOOK_STORE_PATH=/data/webhooks.sqlite3
-
-# Default transport: streamable HTTP on port 8000
 EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+  CMD ["suunto-mcp", "--healthcheck"]
 
-ENTRYPOINT ["uv", "run", "suunto-mcp"]
+# Retain access to root-owned mode 0600 files in existing volumes.
+ENTRYPOINT ["suunto-mcp"]
 CMD ["--transport", "streamable-http", "--host", "0.0.0.0", "--port", "8000"]
