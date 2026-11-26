@@ -400,7 +400,7 @@ async fn token_request(app: &App, form: &[(&str, &str)]) -> Result<Value> {
     );
     let mut response = app
         .http
-        .post(config.oauth_endpoint("oauth/token")?)
+        .post(config.oauth_url("oauth/token")?)
         .basic_auth(&config.client_id, Some(&config.client_secret))
         .form(form)
         .send()
@@ -485,7 +485,7 @@ fn authorization_url(app: &App, state: Option<&str>) -> Result<Value> {
         !config.redirect_uri.is_empty(),
         "SUUNTO_REDIRECT_URI is required."
     );
-    let mut url = config.oauth_endpoint("oauth/authorize")?;
+    let mut url = config.oauth_url("oauth/authorize")?;
     let generated_state = uuid::Uuid::new_v4().simple().to_string();
     url.query_pairs_mut()
         .append_pair("response_type", "code")
@@ -592,7 +592,7 @@ pub(super) async fn call(app: &App, name: &str, args: &Value) -> Result<Value> {
             let record = tokens.resolve(id, default).await?;
             let status = app
                 .http
-                .get(app.config.oauth_endpoint("oauth/deauthorize")?)
+                .get(app.config.oauth_url("oauth/deauthorize")?)
                 .bearer_auth(&record.access_token)
                 .send()
                 .await

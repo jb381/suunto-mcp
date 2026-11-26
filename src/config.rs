@@ -9,7 +9,7 @@ pub struct Config {
     pub redirect_uri: String,
     pub subscription_key: String,
     api_base: Url,
-    oauth_base: Url,
+    oauth_base_url: Url,
     pub rate: f64,
     pub weekly_limit: i64,
     pub quota_file: PathBuf,
@@ -83,8 +83,8 @@ impl Config {
         Ok(self.api_base.join(path.trim_start_matches('/'))?)
     }
 
-    pub(crate) fn oauth_endpoint(&self, path: &str) -> Result<Url> {
-        Ok(self.oauth_base.join(path)?)
+    pub(crate) fn oauth_url(&self, path: &str) -> Result<Url> {
+        Ok(self.oauth_base_url.join(path)?)
     }
 
     pub fn load() -> Result<Self> {
@@ -109,9 +109,9 @@ impl Config {
         let redirect_uri = get("REDIRECT_URI", "");
         let subscription_key = get("SUBSCRIPTION_KEY", "");
         let api_base = get("API_BASE", "https://cloudapi.suunto.com");
-        let oauth_base = get("OAUTH_BASE", "https://cloudapi-oauth.suunto.com");
+        let oauth_base_url = get("OAUTH_BASE", "https://cloudapi-oauth.suunto.com");
         let api_url = service_base(&api_base, "SUUNTO_API_BASE")?;
-        let oauth_url = service_base(&oauth_base, "SUUNTO_OAUTH_BASE")?;
+        let parsed_oauth_url = service_base(&oauth_base_url, "SUUNTO_OAUTH_BASE")?;
         let bearer = get("MCP_API_TOKEN", "");
         let webhook_secret = get("WEBHOOK_SECRET", "");
         let token_store = get("TOKEN_STORE", "keyring");
@@ -186,7 +186,7 @@ impl Config {
             "CLIENT_ID": redact(&client_id), "CLIENT_SECRET": redact(&client_secret),
             "REDIRECT_URI": redact(&redirect_uri), "SUBSCRIPTION_KEY": redact(&subscription_key),
             "MCP_API_TOKEN": redact(&bearer), "WEBHOOK_SECRET": redact(&webhook_secret),
-            "API_BASE": api_base, "OAUTH_BASE": oauth_base,
+            "API_BASE": api_base, "OAUTH_BASE": oauth_base_url,
             "API_CALLS_PER_MINUTE": rate, "API_WEEKLY_CALL_LIMIT": weekly_limit, "API_QUOTA_FILE": quota,
             "TOKEN_STORE": token_store, "TOKEN_FILE": tokens, "DEFAULT_ACCOUNT_ID": default_account,
             "LOCAL_DATA_DIR": data, "EXPORT_DIR": exports, "MAX_BASE64_BYTES": max_base64_bytes,
@@ -199,7 +199,7 @@ impl Config {
             redirect_uri,
             subscription_key,
             api_base: api_url,
-            oauth_base: oauth_url,
+            oauth_base_url: parsed_oauth_url,
             rate,
             weekly_limit,
             quota_file,
@@ -247,7 +247,7 @@ mod tests {
         })
         .unwrap();
         assert_eq!(
-            config.oauth_endpoint("oauth/token").unwrap().as_str(),
+            config.oauth_url("oauth/token").unwrap().as_str(),
             "https://example.net/suunto/oauth/token"
         );
         assert_eq!(
