@@ -4,7 +4,7 @@
 
 Turn your Suunto history into something you can actually talk to.
 
-Suunto MCP is a [FastMCP](https://gofastmcp.com/) server for Suunto Cloud API
+Suunto MCP is a Rust MCP server for Suunto Cloud API
 workouts, routes, and 24/7 activity, sleep, and recovery data. It gives MCP
 clients a practical, quota-aware way to explore training data, with supporting
 tools for local FIT/GPX files, Apple Health exports, and Suunto webhook
@@ -34,10 +34,9 @@ Write/push tools stay off unless you explicitly set
 
 ## Quick Start
 
-Requirements:
+Requirements
 
-- Python 3.12 or newer
-- [`uv`](https://docs.astral.sh/uv/)
+- Rust 1.96 or newer
 - Suunto API Zone credentials for cloud access
 
 Local file parsing works without Suunto credentials, so you can kick the tires
@@ -46,7 +45,7 @@ before wiring up cloud access.
 ```bash
 git clone https://github.com/jb381/suunto-mcp.git
 cd suunto-mcp
-uv sync
+cargo build --locked --release
 cp .env.example .env
 ```
 
@@ -69,7 +68,7 @@ In Suunto API Zone, set the OAuth redirect URI to exactly the same value as
 Run the stdio MCP server:
 
 ```bash
-uv run suunto-mcp
+./target/release/suunto-mcp
 ```
 
 ## Docker
@@ -78,10 +77,15 @@ Build and run the server as a container for headless / production deployments:
 
 ```bash
 docker build -t suunto-mcp .
-docker run -d --name suunto-mcp                                     \
-  -p 8000:8000                                                       \
-  --env-file .env                                                    \
-  -v suunto-mcp-data:/data                                           \
+docker run -d --name suunto-mcp \
+  --memory 256m --memory-swap 256m \
+  -p 8000:8000 \
+  --env-file .env \
+  -e SUUNTO_TOKEN_STORE=file \
+  -e SUUNTO_LOCAL_DATA_DIR=/data/data \
+  -e SUUNTO_EXPORT_DIR=/data/exports \
+  -e SUUNTO_API_QUOTA_FILE=/data/api-quota.json \
+  -v suunto-mcp-data:/data \
   suunto-mcp
 ```
 
@@ -101,14 +105,25 @@ A ready-to-use `docker-compose.yml` lives in the repository root. Create your
 docker compose up -d
 ```
 
-The compose file mounts a named volume for persistent data and includes a
-health check on the MCP endpoint.
+Set `SUUNTO_MCP_API_TOKEN` in `.env` before starting Compose. Compose uses a 256 MiB
+memory limit with container swap disabled. Its health check sends an
+unauthenticated `GET /health`, which returns `{"status":"ok"}` without creating
+an MCP session or checking Suunto Cloud availability.
+
+The Rust image reads the existing named volume in place. It uses the same
+`/data/tokens.json`, `/data/api-quota.json`, `/data/webhooks.sqlite3`, and
+`/data/data/imports.json` formats and preserves the `/data/exports` and
+`/data/imports` mounts. The container retains UID 0 by default because existing
+token and quota files can be root-owned and mode `0600`. To set a non-root
+container user, give that UID access to the existing state files and write
+access to the data and export directories first.
 
 ### Kubernetes
 
 A `kubernetes.yaml` manifest is provided for Kubernetes deployments. It
 includes a Deployment, Service, PersistentVolumeClaim, a dedicated Namespace,
-and a placeholder Secret for API credentials.
+and a placeholder Secret for API credentials. It has a 256 MiB memory limit
+and uses `GET /health` for liveness and readiness.
 
 ```bash
 # Edit the secret with your credentials first, then:
@@ -124,8 +139,8 @@ your checkout:
 {
   "mcpServers": {
     "suunto": {
-      "command": "uv",
-      "args": ["run", "--directory", "/absolute/path/to/suunto-mcp", "suunto-mcp"]
+      "command": "/absolute/path/to/suunto-mcp/target/release/suunto-mcp",
+      "cwd": "/absolute/path/to/suunto-mcp"
     }
   }
 }
@@ -138,7 +153,7 @@ your checkout:
   "suunto": {
     "enabled": true,
     "type": "local",
-    "command": ["uv", "run", "--directory", "/path/to/suunto-mcp", "suunto-mcp"]
+    "command": ["/absolute/path/to/suunto-mcp/target/release/suunto-mcp"]
   }
 }
 ```
@@ -146,7 +161,7 @@ your checkout:
 Prefer HTTP while testing locally? Start the streamable HTTP transport:
 
 ```bash
-uv run suunto-mcp --transport streamable-http --host 127.0.0.1 --port 8000
+./target/release/suunto-mcp --transport streamable-http --host 127.0.0.1 --port 8000
 ```
 
 Then connect your client to:
@@ -155,8 +170,13 @@ Then connect your client to:
 http://127.0.0.1:8000/mcp
 ```
 
-If you bind HTTP, SSE, or streamable HTTP to a non-local host, set
-`SUUNTO_MCP_API_TOKEN`. The server refuses non-local HTTP binds without a token.
+`--transport http` is an alias for `streamable-http`. Legacy clients can use
+`--transport sse` and connect to `/sse`.
+
+Set `SUUNTO_MCP_API_TOKEN` for non-loopback binds and send it with every MCP
+request as `Authorization: Bearer <token>`. The same header applies on loopback
+when a token is set. For stdio clients, launch the executable from the directory
+containing `.env` or supply the settings in the client's process environment.
 
 ## First Suunto Authorization
 
@@ -228,6 +248,22 @@ HTTP transport bearer auth:
 SUUNTO_MCP_API_TOKEN=generate-a-long-random-token
 ```
 
+The default desktop token backend is `keyring`. `memory` keeps accounts for
+the current process, and `sqlite` uses `SUUNTO_TOKEN_FILE` for a SQLite database.
+Keep `file` selected when reusing an existing JSON token file.
+
+HTTP servers default to 128 sessions and a 15-minute idle timeout. The settings
+are `SUUNTO_MCP_MAX_SESSIONS` and `SUUNTO_MCP_SESSION_IDLE_SECONDS`. Explicit
+Streamable HTTP `DELETE /mcp` and legacy SSE disconnects release the session
+immediately. If a Streamable HTTP session expires, initialize again after the
+server returns HTTP 404 for its old session ID.
+
+HTTP request bodies are limited to 1 MiB. FIT, normalized JSON, and other
+buffered local inputs are limited to 16 MiB. GPX, CSV/TSV, and Apple Health XML
+are read incrementally with bounded previews. Use file output for binary
+exports that exceed the inline response limit. CSV/TSV supports standard web
+encoding labels and single-byte ASCII delimiters.
+
 Webhook verification and storage:
 
 ```env
@@ -289,26 +325,23 @@ the local weekly guard.
 - If quota blocks a request, inspect `suunto://quota` or call
   `suunto_api_quota_status`. By default the ledger is stored next to
   `.suunto-mcp/data` as `api-quota.json`.
-- If live API tests do not run, that is expected. They are skipped unless
-  `SUUNTO_LIVE_TESTS=true` and `SUUNTO_LIVE_TOKEN_FILE` points at a valid token
-  file.
 
 ## Development
 
 ```bash
-uv sync --dev
-uv run ruff format --check .
-uv run ruff check .
-uv run pyright
-uv run pytest
+cargo fmt --check
+cargo clippy --locked --all-targets -- -D warnings
+cargo test --locked
+docker build -t suunto-mcp .
 ```
 
-Live read-only tests are opt-in:
+The default test suite uses temporary stores and mock Suunto API endpoints.
+To test read-only access with your own credentials and a token response JSON:
 
 ```bash
 SUUNTO_LIVE_TESTS=true \
 SUUNTO_LIVE_TOKEN_FILE=.suunto-mcp/oauth-test-token.json \
-uv run pytest tests/live
+cargo test --locked --test live -- --ignored
 ```
 
 ## Release Checklist
@@ -317,12 +350,11 @@ Before publishing:
 
 1. Confirm `.env`, `.suunto-mcp/`, exported files, and token files are absent from
    `git status --short`.
-2. Run `uv sync --dev --locked`.
-3. Run the full development check suite.
-4. Run `uv build`.
-5. Keep `SUUNTO_ENABLE_WRITE_TOOLS=false` in examples and defaults.
-6. Update `CHANGELOG.md`.
-7. Tag the release, for example `git tag v0.1.0`.
+2. Run the full development check suite.
+3. Run `cargo build --release --locked`.
+4. Keep `SUUNTO_ENABLE_WRITE_TOOLS=false` in examples and defaults.
+5. Update `CHANGELOG.md`.
+6. Tag the release, for example `git tag v0.1.0`.
 
 ## Suunto Docs
 

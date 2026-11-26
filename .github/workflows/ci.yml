@@ -10,50 +10,25 @@ permissions:
 jobs:
   checks:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v8.2.0
-        with:
-          enable-cache: true
-
-      - name: Install dependencies
-        run: uv sync --locked --dev
-
+      - uses: actions/checkout@v6
+      - name: Install Rust and lint tools
+        run: rustup toolchain install 1.96 --profile minimal --component rustfmt --component clippy
       - name: Check formatting
-        run: uv run ruff format --check .
-
+        run: cargo +1.96 fmt --check
       - name: Lint
-        run: uv run ruff check .
-
-      - name: Type check
-        run: uv run pyright
-
+        run: cargo +1.96 clippy --locked --all-targets -- -D warnings
       - name: Test
-        run: uv run pytest
-
-      - name: Audit dependencies for CVEs
-        run: |
-          uv export --frozen --no-dev --no-emit-project --output-file=/tmp/requirements.txt
-          uv pip install pip-audit
-          uv run pip-audit -r /tmp/requirements.txt || echo "⚠️ See above for CVEs — Dependabot will update these"
+        run: cargo +1.96 test --locked
+      - name: Build container
+        run: docker build --tag suunto-mcp:ci .
 
   secrets-scan:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
       - name: Run gitleaks
         uses: docker://ghcr.io/gitleaks/gitleaks:latest
         with:

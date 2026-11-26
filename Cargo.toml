@@ -1,0 +1,45 @@
+[package]
+name = "suunto-mcp"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+description = "MCP server for Suunto workouts, routes, and 24/7 data"
+license = "MIT"
+repository = "https://github.com/jb381/suunto-mcp"
+
+[dependencies]
+anyhow = "1"
+async-stream = "0.3"
+axum = "0.8"
+base64 = "0.22"
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4", features = ["derive"] }
+csv = "1"
+dotenvy = "0.15"
+encoding_rs = "0.8"
+encoding_rs_io = "0.1"
+fitparser = "0.12"
+hex = "0.4"
+hmac = "0.12"
+keyring = { version = "3.6.3", features = ["apple-native", "windows-native", "async-secret-service", "async-io", "crypto-rust"] }
+multer = "3"
+quick-xml = "0.42"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_urlencoded = "0.7"
+sha2 = "0.10"
+subtle = "2"
+tempfile = "3"
+tokio = { version = "1", features = ["io-std", "io-util", "macros", "net", "rt-multi-thread", "signal", "sync", "time", "fs"] }
+tokio-util = "0.7"
+uuid = { version = "1", features = ["v4", "serde"] }
+zip = { version = "4.6", default-features = false, features = ["deflate"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["test-util"] }
+tower = { version = "0.5", features = ["util"] }
+
+[profile.release]
+strip = true

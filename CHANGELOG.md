@@ -4,7 +4,24 @@ All notable changes to this project will be documented here.
 
 ## Unreleased
 
+### Changed
+
+- Rewrote the server in Rust, preserving its 60 MCP tools, four resources,
+  stdio, Streamable HTTP, legacy SSE, webhook routes, and on-disk data formats.
+- Container builds use a multi-stage Rust build and a slim Debian runtime.
+  Compose and Kubernetes limit the service to 256 MiB of memory.
+
+### Added
+
+- Unauthenticated, stateless `GET /health` for container probes and uptime
+  monitoring.
+- Configurable MCP session limits and idle eviction, with cleanup on
+  Streamable HTTP session deletion and legacy SSE disconnect.
+
 ### Fixed
+
+- Docker and Kubernetes health probes stop creating MCP sessions.
+- Compose uses the bearer token from `.env` for MCP requests.
 
 - `/247samples/*` endpoints (sleep, activity, recovery) now send `from`/`to` as
   Unix millisecond timestamps instead of ISO 8601 strings, fixing HTTP 400

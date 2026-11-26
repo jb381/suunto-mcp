@@ -12,6 +12,8 @@ metadata:
     app: suunto-mcp
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: suunto-mcp
@@ -49,19 +51,22 @@ spec:
             - name: data
               mountPath: /data
           livenessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - 'curl -sf -X POST -H "Authorization: Bearer $SUUNTO_MCP_API_TOKEN" -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" --data-raw '"'"'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"hc","version":"1"}}}'"'"' http://localhost:8000/mcp'
+            httpGet:
+              path: /health
+              port: 8000
             initialDelaySeconds: 10
             periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            periodSeconds: 5
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "250m"
+              memory: "64Mi"
+              cpu: "100m"
             limits:
-              memory: "512Mi"
+              memory: "256Mi"
               cpu: "500m"
       volumes:
         - name: data

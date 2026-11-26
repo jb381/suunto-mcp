@@ -1,0 +1,177 @@
+{
+  "sources": {
+    "api_catalog": "https://apizone.suunto.com/apis",
+    "oauth": "https://apizone.suunto.com/how-to-start",
+    "webhooks": "https://apizone.suunto.com/webhooks",
+    "routes": "https://apizone.suunto.com/route-description",
+    "uploads": "https://apizone.suunto.com/how-to-workout-upload",
+    "guides": "https://apizone.suunto.com/suuntoplus-guide-description",
+    "fit": "https://apizone.suunto.com/fit-description"
+  },
+  "api_groups": {
+    "SUUNTO AUTHORISATION API": {
+      "operations": [
+        "GET /oauth/authorize",
+        "POST /oauth/token",
+        "POST /oauth/deauthorize"
+      ],
+      "tools": [
+        "suunto_get_authorization_url",
+        "suunto_exchange_authorization_code",
+        "suunto_refresh_token",
+        "suunto_deauthorize"
+      ]
+    },
+    "SUUNTO WORKOUT API": {
+      "operations": [
+        "GET /v3/workouts",
+        "GET /v3/workouts/{id}",
+        "GET /v3/workouts/{id}/fit",
+        "POST /v1/workouts/addinfo/{id}"
+      ],
+      "tools": [
+        "suunto_list_workouts",
+        "suunto_get_workout",
+        "suunto_get_workout_fit",
+        "suunto_parse_workout_fit",
+        "suunto_get_complete_workout",
+        "suunto_add_workout_description_info"
+      ]
+    },
+    "SUUNTO WORKOUT API (DEPRECATED)": {
+      "operations": [
+        "GET /v2/workouts",
+        "GET /v2/workouts/{workoutKey}",
+        "GET /v2/workouts/{workoutKey}/fit"
+      ],
+      "tools": [
+        "suunto_list_workouts_deprecated_v2",
+        "suunto_get_workout_deprecated_v2",
+        "suunto_get_workout_fit_deprecated_v2"
+      ]
+    },
+    "SUUNTO 247 DATA API": {
+      "operations": [
+        "GET /247samples/activity",
+        "GET /247samples/sleep",
+        "GET /247samples/recovery",
+        "GET /247samples/daily-activity-statistics",
+        "Local 24/7 summary quota estimate"
+      ],
+      "tools": [
+        "suunto_get_activity_samples",
+        "suunto_get_sleep_data",
+        "suunto_get_recovery_data",
+        "suunto_get_daily_activity_statistics",
+        "suunto_estimate_247_summary_calls",
+        "suunto_get_247_summary"
+      ]
+    },
+    "SUUNTO DAILY ACTIVITY API": {
+      "operations": [
+        "GET /247",
+        "GET /247/daily-activity-statistics"
+      ],
+      "tools": [
+        "suunto_get_legacy_daily_activity",
+        "suunto_get_legacy_daily_activity_statistics"
+      ]
+    },
+    "SUUNTO ROUTE API": {
+      "operations": [
+        "GET /v2/route",
+        "GET /v2/route/{id}",
+        "GET /v2/route/{id}/export",
+        "POST /v2/route/import",
+        "POST /webhooks/suunto/route"
+      ],
+      "tools": [
+        "suunto_list_routes",
+        "suunto_get_route",
+        "suunto_export_route_gpx",
+        "suunto_parse_route_gpx",
+        "suunto_import_route_gpx"
+      ]
+    },
+    "SUUNTO UPLOAD API": {
+      "operations": [
+        "POST /v2/upload",
+        "PUT signed object-storage URL",
+        "GET /v2/upload/{id}",
+        "Poll GET /v2/upload/{id}"
+      ],
+      "tools": [
+        "suunto_init_workout_upload",
+        "suunto_upload_workout_fit_to_signed_url",
+        "suunto_get_upload_status",
+        "suunto_wait_for_upload_status",
+        "suunto_upload_workout_fit"
+      ]
+    },
+    "SUUNTO GUIDES API": {
+      "operations": [
+        "GET /v2/guides/items",
+        "GET /v2/guides/files/{id}",
+        "POST /v2/guides/files",
+        "PUT /v2/guides/files/{id}",
+        "DELETE /v2/guides/files/{id}"
+      ],
+      "tools": [
+        "suunto_list_guides",
+        "suunto_get_guide",
+        "suunto_validate_guide_json",
+        "suunto_create_guide_zip",
+        "suunto_create_guide",
+        "suunto_update_guide",
+        "suunto_delete_guide"
+      ]
+    },
+    "WEBHOOK NOTIFICATIONS": {
+      "operations": [
+        "POST /webhooks/suunto",
+        "POST /webhooks/suunto/workout",
+        "POST /webhooks/suunto/route",
+        "POST /webhooks/suunto/247/activity",
+        "POST /webhooks/suunto/247/sleep",
+        "POST /webhooks/suunto/247/recovery",
+        "POST /webhooks/suunto/legacy-workout"
+      ],
+      "tools": [
+        "suunto_verify_webhook_signature",
+        "suunto_store_webhook_event",
+        "suunto_list_webhook_events",
+        "suunto_get_webhook_event",
+        "suunto_delete_webhook_event",
+        "suunto_suggest_webhook_followups"
+      ]
+    },
+    "NO-KEY LOCAL IMPORTS": {
+      "operations": [
+        "Parse local FIT files",
+        "Parse local GPX files",
+        "Parse local Apple Health export.xml files",
+        "Register normalized JSON files",
+        "Parse and register CSV/TSV files",
+        "List and re-parse imported files"
+      ],
+      "tools": [
+        "suunto_parse_fit_file",
+        "suunto_import_fit_file",
+        "suunto_parse_gpx_file",
+        "suunto_import_gpx_file",
+        "suunto_parse_health_export",
+        "suunto_import_health_export",
+        "suunto_import_activity_json",
+        "suunto_parse_activity_csv",
+        "suunto_import_activity_csv",
+        "suunto_list_imported_files",
+        "suunto_get_imported_activity"
+      ]
+    }
+  },
+  "safety": {
+    "write_gate": "SUUNTO_ENABLE_WRITE_TOOLS must be true for route import, uploads, guide mutations, and workout add-info.",
+    "quota_guard": "SUUNTO_API_CALLS_PER_MINUTE and SUUNTO_API_WEEKLY_CALL_LIMIT guard Cloud API requests locally.",
+    "http_auth": "Non-local HTTP/SSE transport requires SUUNTO_MCP_API_TOKEN."
+  }
+}
